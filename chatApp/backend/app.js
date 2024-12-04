@@ -4,6 +4,7 @@ import { connection } from "./config/db.js";
 import {errorMiddleware} from "./middlewares/error.js"
 import userRoute from "./routes/user.routes.js"
 import cors from "cors"
+import cookieParser from "cookie-parser";
 
 
 
@@ -16,6 +17,9 @@ app.use(cors({
 connection()
 
 app.use(express.json())
+app.use(cookieParser())
+
+
 app.use('/api/user', userRoute)
 app.use(errorMiddleware);
 export default app;
