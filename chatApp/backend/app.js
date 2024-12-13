@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import { connection } from "./config/db.js";
 import {errorMiddleware} from "./middlewares/error.js"
 import userRoute from "./routes/user.routes.js"
+import messageRoute from "./routes/message.route.js"
 import cors from "cors"
 import cookieParser from "cookie-parser";
 
@@ -21,5 +22,6 @@ app.use(cookieParser())
 
 
 app.use('/api/user', userRoute)
+app.use('/api/message', messageRoute)
 app.use(errorMiddleware);
 export default app;
