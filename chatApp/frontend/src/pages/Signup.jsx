@@ -1,6 +1,8 @@
+import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const {
@@ -9,9 +11,27 @@ export default function Signup() {
     watch,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate()
 
-  const onSubmitHandler = (data) => {
-    console.log(data); // Handle form submission logic here
+  const onSubmitHandler = async (data) => {
+    // Handle form submission logic here
+    try {
+      const res = await axios.post(`http://localhost:3000/api/user/register`, data, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        withCredentials: true
+      })
+      // console.log(res);
+      if(res.data.success){
+        toast.success(res.data.message)
+        navigate("/login")
+      }
+      
+    } catch (error) {
+      // console.log(error);
+      toast.error(error.response.data.message)
+    }
   };
 
   const password = watch("password"); // Watch password for validation in confirmPassword
@@ -32,6 +52,25 @@ export default function Signup() {
           <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
             {/* Left Column */}
             <div className="md:w-1/2 space-y-4">
+              {/* FullName */}
+              <div>
+                <label htmlFor="fullname" className="block text-sm font-medium text-base-content">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  {...register("fullName", { required: "Fullname is required"})}
+                  placeholder="Enter your Full Name"
+                  className={`input w-full focus:ring-primary placeholder:text-primary ${
+                    errors.fullName ? "input-error" : "input-bordered input-primary"
+                  }`}
+                />
+                {errors.fullName && (
+                  <p className="text-error text-sm mt-1">{errors.fullName.message}</p>
+                )}
+              </div>
+
               {/* Username */}
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-base-content">

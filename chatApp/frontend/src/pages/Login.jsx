@@ -1,6 +1,10 @@
+import axios from 'axios';
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom'
+import { setAuthUser } from '../redux/userSlice';
 
 export default function Login() {
 
@@ -11,8 +15,30 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
-  const onSubmitHandler = (data) => {
-    console.log(data); // Handle form submission logic here
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const onSubmitHandler = async (data) => {
+    // Handle form submission logic here
+    
+    try {
+      const res = await axios.post(`http://localhost:3000/api/user/login`, data, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        withCredentials: true
+      })
+      //  console.log(res);
+      if(res.data.success){
+        toast.success(res.data.message)
+        navigate("/")
+        dispatch(setAuthUser(res.data))
+      }
+      
+    } catch (error) {
+      // console.log(error);
+      toast.error(error.response.data.message)
+    }
   };
 
   return (
